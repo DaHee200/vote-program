@@ -43,8 +43,8 @@
 <div align=center><h1>📚 STACKS</h1></div>
 
 <div> 
-  <img src="https://img.shields.io/badge/kotlin-7F52FF?style=for-the-badge&logo=java&logoColor=white">
-<img src="https://img.shields.io/badge/swagger-85EA2D?style=for-the-badge&logo=java&logoColor=white">
+    <img src="https://img.shields.io/badge/kotlin-7F52FF?style=for-the-badge&logo=java&logoColor=white">
+    <img src="https://img.shields.io/badge/swagger-85EA2D?style=for-the-badge&logo=java&logoColor=white">
 
 [//]: # (<img src="https://img.shields.io/badge/redis-FF4438?style=for-the-badge&logo=java&logoColor=white">)
 
