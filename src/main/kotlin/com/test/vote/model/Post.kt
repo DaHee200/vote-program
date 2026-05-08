@@ -1,0 +1,27 @@
+package com.test.vote.model
+
+import jakarta.persistence.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+
+@Entity
+class Post(
+    val question: String,
+    @Column(length = 80)
+    val endDate: LocalDate
+) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0
+
+    val createdDate: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
+
+
+}
+
+
+
+
+
+
