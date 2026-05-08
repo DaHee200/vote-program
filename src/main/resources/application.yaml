@@ -3,13 +3,13 @@
 spring:
   application:
     name: vote-service
-    datasource:
-      url: jdbc:h2:mem:testdb
-      username: sa
-    jpa:
-      hibernate:
-        ddl-auto: create-drop
-      show-sql: true
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
   h2:
     console:
       enabled: true
