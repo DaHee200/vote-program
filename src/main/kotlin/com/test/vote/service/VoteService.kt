@@ -47,7 +47,17 @@ class VoteService(
         }
     }
 
-    // cancelVote will be added in the next commit
+    @Transactional
+    fun cancelVote(postId: Long, ipAddress: String) {
+        checkRateLimit(ipAddress)
+
+        val vote = voteRepository.findByPostIdAndIpAddress(postId, ipAddress)
+        if (vote != null && vote.isActive) {
+            vote.isActive = false
+            decrementCount(postId, vote.choice)
+            voteRepository.save(vote)
+        }
+    }
 
     private fun checkRateLimit(ipAddress: String) {
         if (!rateLimitService.isAllowed(ipAddress)) {

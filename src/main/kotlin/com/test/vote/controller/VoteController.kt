@@ -31,5 +31,13 @@ class VoteController(
         voteService.vote(postId, ipAddress, result)
     }
 
-    // cancelVote will be added in the next commit
+    @Operation(method = "DELETE", summary = "투표 취소하기")
+    @DeleteMapping
+    fun cancelVote(
+        @PathVariable postId: Long,
+        request: HttpServletRequest
+    ) {
+        val ipAddress = IpUtil.getClientIp(request)
+        voteService.cancelVote(postId, ipAddress)
+    }
 }
