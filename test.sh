@@ -10,7 +10,7 @@ done
 echo "App started!"
 
 echo "1. Create Post"
-curl -s -X POST http://localhost:8080/posts/new -H "Content-Type: application/json" -d '{"question":"Kotlin vs Java", "endDate":"2026-12-31"}'
+curl -s -X POST http://localhost:8080/posts/new -H "Content-Type: application/json" -d '{"question":"Kotlin vs Java", "category":"ETC", "endDate":"2026-12-31"}'
 
 echo "2. Get Posts"
 POST_ID=$(curl -s http://localhost:8080/posts | grep -o '"id":[0-9]*' | head -1 | awk -F: '{print $2}')

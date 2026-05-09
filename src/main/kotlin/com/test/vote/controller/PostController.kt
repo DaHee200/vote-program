@@ -3,6 +3,7 @@ package com.test.vote.controller
 import com.test.vote.controller.req.PostReq
 import com.test.vote.controller.res.PostRes
 import com.test.vote.controller.res_factory.PostResFactory
+import com.test.vote.model.Category
 import com.test.vote.service.PostService
 import com.test.vote.controller.cmd_factory.PostCommandFactory
 import io.swagger.v3.oas.annotations.Operation

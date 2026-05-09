@@ -11,6 +11,7 @@ class PostResFactory {
             return PostRes(
                 id = post.id,
                 question = post.question,
+                category = post.category,
                 endDate = post.endDate,
                 createdDate = post.createdDate,
                 agreeCount = post.voteResult?.agreeCount ?: 0,

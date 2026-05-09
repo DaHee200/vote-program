@@ -8,6 +8,8 @@ import java.time.ZoneId
 @Entity
 class Post(
     val question: String,
+    @Enumerated(EnumType.STRING)
+    val category: Category,
     @Column(length = 80)
     val endDate: LocalDate
 ) {

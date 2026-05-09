@@ -10,7 +10,7 @@ class PostCommandFactory {
         fun createRegisterPostCommand(
             newPost: PostReq
         ): PostCommand {
-            return PostCommand(newPost.question, newPost.endDate)
+            return PostCommand(newPost.question, newPost.category, newPost.endDate)
         }
     }
 }

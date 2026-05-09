@@ -1,5 +1,6 @@
 package com.test.vote.service
 
+import com.test.vote.model.Category
 import com.test.vote.model.Post
 import com.test.vote.model.entity_factory.PostFactory
 import com.test.vote.repository.PostRepository
@@ -14,7 +15,7 @@ class PostService(private val postRepository: PostRepository) {
 
     @Transactional
     fun createPost(postCmd: PostCommand) {
-        val post = PostFactory.createPost(postCmd.question, postCmd.endDate)
+        val post = PostFactory.createPost(postCmd.question, postCmd.category, postCmd.endDate)
         post.voteResult = com.test.vote.model.VoteResult(post)
         postRepository.save(post)
     }
