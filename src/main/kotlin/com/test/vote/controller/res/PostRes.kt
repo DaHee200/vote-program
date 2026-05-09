@@ -7,5 +7,7 @@ data class PostRes(
     val id: Long,
     val question: String,
     val endDate: LocalDate,
-    val createdDate: LocalDateTime
+    val createdDate: LocalDateTime,
+    val agreeCount: Long,
+    val disagreeCount: Long
 )

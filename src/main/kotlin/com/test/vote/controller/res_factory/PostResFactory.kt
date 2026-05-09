@@ -12,7 +12,9 @@ class PostResFactory {
                 id = post.id,
                 question = post.question,
                 endDate = post.endDate,
-                createdDate = post.createdDate
+                createdDate = post.createdDate,
+                agreeCount = post.voteResult?.agreeCount ?: 0,
+                disagreeCount = post.voteResult?.disagreeCount ?: 0
             )
         }
     }

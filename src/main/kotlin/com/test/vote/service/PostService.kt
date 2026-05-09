@@ -14,7 +14,9 @@ class PostService(private val postRepository: PostRepository) {
 
     @Transactional
     fun createPost(postCmd: PostCommand) {
-        postRepository.save(PostFactory.createPost(postCmd.question, postCmd.endDate))
+        val post = PostFactory.createPost(postCmd.question, postCmd.endDate)
+        post.voteResult = com.test.vote.model.VoteResult(post)
+        postRepository.save(post)
     }
 
     @Transactional(readOnly = true)

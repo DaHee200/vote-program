@@ -17,6 +17,8 @@ class Post(
 
     val createdDate: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
 
+    @OneToOne(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    var voteResult: VoteResult? = null
 
 }
 
