@@ -34,9 +34,11 @@ class PostController(
     @GetMapping
     fun getPosts(
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "20") size: Int
+        @RequestParam(defaultValue = "20") size: Int,
+        @RequestParam(required = false) category: Category?,
+        @RequestParam(defaultValue = "latest") sortBy: String
     ): Slice<PostRes> {
-        return postService.getPosts(page, size)
+        return postService.getPosts(page, size, category, sortBy)
             .map { PostResFactory.createPostRes(it) }
     }
 }

@@ -21,9 +21,19 @@ class PostService(private val postRepository: PostRepository) {
     }
 
     @Transactional(readOnly = true)
-    fun getPosts(page: Int, size: Int): Slice<Post> {
-        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate"))
-        return postRepository.findSliceBy(pageable)
+    fun getPosts(page: Int, size: Int, category: Category?, sortBy: String): Slice<Post> {
+        val sort = if (sortBy.equals("popular", ignoreCase = true)) {
+            Sort.by(Sort.Direction.DESC, "voteResult.totalCount")
+        } else {
+            Sort.by(Sort.Direction.DESC, "createdDate")
+        }
+        val pageable = PageRequest.of(page, size, sort)
+        
+        return if (category != null) {
+            postRepository.findByCategory(category, pageable)
+        } else {
+            postRepository.findSliceBy(pageable)
+        }
     }
 
 }

@@ -13,4 +13,6 @@ interface PostRepository : JpaRepository<Post, Long> {
     @EntityGraph(attributePaths = ["voteResult"])
     fun findSliceBy(pageable: Pageable): Slice<Post>
 
+    @EntityGraph(attributePaths = ["voteResult"])
+    fun findByCategory(category: Category, pageable: Pageable): Slice<Post>
 }
