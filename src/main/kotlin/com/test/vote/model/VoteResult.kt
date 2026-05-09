@@ -17,4 +17,7 @@ class VoteResult(
 
     var disagreeCount: Long = 0
         protected set
+
+    var totalCount: Long = 0
+        protected set
 }
