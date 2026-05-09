@@ -1,7 +1,8 @@
 package com.test.vote.controller
 
-import com.test.vote.controller.dto.PostDTO
+import com.test.vote.controller.req.PostReq
 import com.test.vote.service.PostService
+import com.test.vote.controller.cmd_factory.PostCommandFactory
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.PostMapping
@@ -19,7 +20,7 @@ class PostController(
 
     @Operation(method = "POST", summary = "투표 생성하기")
     @PostMapping("/new")
-    fun createPost(@RequestBody newPost: PostDTO) {
-        postService.createPost()
+    fun createPost(@RequestBody newPost: PostReq) {
+        postService.createPost(PostCommandFactory.createRegisterPostCommand(newPost))
     }
 }
