@@ -60,7 +60,7 @@ Hibernate: update vote_result set agree_count=(agree_count-1),total_count=(total
 Hibernate: update vote_result set disagree_count=(disagree_count+1),total_count=(total_count+1) where post_id=?
 Hibernate: update vote set choice=?,ip_address=?,is_active=?,post_id=? where id=?
 Hibernate: select p1_0.id,p1_0.category,p1_0.created_date,p1_0.end_date,p1_0.question,vr1_0.id,vr1_0.agree_count,vr1_0.disagree_count,vr1_0.total_count from post p1_0 left join vote_result vr1_0 on p1_0.id=vr1_0.post_id order by p1_0.created_date desc offset ? rows fetch first ? rows only
-Hibernate: select v1_0.id,v1_0.choice,v1_0.ip_address,v1_0.is_active,v1_0.post_id from vote v1_0 where v1_0.post_id=? and v1_0.ip_address=?
+Hibernate: select v1_0.id,v1_0.choice,v1_0.ip_address,v1_0.is_active,v1_0.post_id from vote v1_0 where v1_0.post_id=? and v1_0../gradlew testip_address=?
 Hibernate: update vote_result set disagree_count=(disagree_count-1),total_count=(total_count-1) where post_id=?
 Hibernate: update vote set choice=?,ip_address=?,is_active=?,post_id=? where id=?
 Hibernate: select p1_0.id,p1_0.category,p1_0.created_date,p1_0.end_date,p1_0.question,vr1_0.id,vr1_0.agree_count,vr1_0.disagree_count,vr1_0.total_count from post p1_0 left join vote_result vr1_0 on p1_0.id=vr1_0.post_id order by p1_0.created_date desc offset ? rows fetch first ? rows only
