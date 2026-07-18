@@ -2,6 +2,31 @@ const API_BASE = (window.location.hostname === 'localhost' || window.location.ho
     ? (window.location.port === '8080' ? '' : 'http://localhost:8080')
     : 'https://vote-program-backend.onrender.com'; // <-- REPLACE with your actual deployed backend URL (Render, Railway, etc.)
 
+const VOTED_KEY = "voted_post_ids";
+function getVotedPostIds() {
+    try {
+        return JSON.parse(localStorage.getItem(VOTED_KEY)) || [];
+    } catch {
+        return [];
+    }
+}
+function addVotedPostId(id) {
+    const ids = getVotedPostIds();
+    if (!ids.includes(id)) {
+        ids.push(id);
+        localStorage.setItem(VOTED_KEY, JSON.stringify(ids));
+    }
+}
+
+let autoTransitionTimeout = null;
+
+function startAutoTransitionTimer() {
+    if (autoTransitionTimeout) clearTimeout(autoTransitionTimeout);
+    autoTransitionTimeout = setTimeout(() => {
+        nextCard();
+    }, 10000);
+}
+
 // Client-side Mock Data Fallback when backend is not reachable/configured
 const MOCK_FALLBACK_DATA = {
     content: [
@@ -156,15 +181,15 @@ async function castVote(postId, choice) {
         
         if (response.ok) {
             showFeedback('선택 완료');
-            setTimeout(nextCard, 800);
+            startAutoTransitionTimer();
         } else {
             showFeedback('선택 완료');
-            setTimeout(nextCard, 800);
+            startAutoTransitionTimer();
         }
     } catch (error) {
         console.warn("Vote API error, simulating mock vote:", error);
         showFeedback('선택 완료');
-        setTimeout(nextCard, 800);
+        startAutoTransitionTimer();
     }
 }
 
@@ -183,13 +208,30 @@ function renderCard() {
 
     const card = document.createElement('div');
     card.className = 'vote-card';
-    card.innerHTML = `
-        <div class="status-badge ${isEnded ? 'status-ended' : 'status-ongoing'}">
-            ${isEnded ? '종료됨' : '진행중'}
-        </div>
-        <div class="meta">${post.category} • ${new Date(post.createdDate).toLocaleDateString()}</div>
-        <div class="question">${post.question}</div>
-        <div class="actions">
+    
+    // Check if user already voted
+    const votedIds = getVotedPostIds();
+    const isVoted = votedIds.includes(post.id) || post.voted;
+    
+    let actionsHtml = '';
+    if (isVoted) {
+        const total = (post.agreeCount || 0) + (post.disagreeCount || 0);
+        const agreePercent = total > 0 ? Math.round(((post.agreeCount || 0) / total) * 100) : 50;
+        const disagreePercent = total > 0 ? 100 - agreePercent : 50;
+        actionsHtml = `
+            <div class="vote-results-container">
+                <div class="results-stats">
+                    <span class="stat-agree">👍 찬성 ${agreePercent}% (${post.agreeCount || 0}표)</span>
+                    <span class="stat-disagree">👎 반대 ${disagreePercent}% (${post.disagreeCount || 0}표)</span>
+                </div>
+                <div class="progress-bar-wrapper">
+                    <div class="progress-bar-fill" style="width: ${agreePercent}%;"></div>
+                </div>
+                <div class="auto-next-hint">이전에 투표를 마친 질문입니다.</div>
+            </div>
+        `;
+    } else {
+        actionsHtml = `
             ${!isEnded ? `
             <button class="btn btn-agree" onclick="handleVote(true)">
                 👍
@@ -202,6 +244,17 @@ function renderCard() {
                 투표가 종료되었습니다.
             </div>
             `}
+        `;
+    }
+
+    card.innerHTML = `
+        <div class="status-badge ${isEnded ? 'status-ended' : 'status-ongoing'}">
+            ${isEnded ? '종료됨' : '진행중'}
+        </div>
+        <div class="meta">${post.category} • ${new Date(post.createdDate).toLocaleDateString()}</div>
+        <div class="question">${post.question}</div>
+        <div class="actions" id="actions-${post.id}">
+            ${actionsHtml}
         </div>
         <div class="end-date-info">종료 일자: ${post.endDate.replace(/-/g, '.')}</div>
     `;
@@ -217,26 +270,77 @@ function renderCard() {
 
 function handleVote(choice) {
     const post = posts[currentIndex];
+    
+    // Locally increment counts for immediate response
+    if (choice) {
+        post.agreeCount = (post.agreeCount || 0) + 1;
+    } else {
+        post.disagreeCount = (post.disagreeCount || 0) + 1;
+    }
+    post.voted = true;
+    
+    showVoteResultsOnCard(post);
     castVote(post.id, choice);
 }
 
+function showVoteResultsOnCard(post) {
+    const actionsContainer = document.getElementById(`actions-${post.id}`);
+    if (!actionsContainer) return;
+    
+    const total = (post.agreeCount || 0) + (post.disagreeCount || 0);
+    const agreePercent = total > 0 ? Math.round(((post.agreeCount || 0) / total) * 100) : 50;
+    const disagreePercent = total > 0 ? 100 - agreePercent : 50;
+    
+    addVotedPostId(post.id);
+    
+    actionsContainer.innerHTML = `
+        <div class="vote-results-container">
+            <div class="results-stats">
+                <span class="stat-agree">👍 찬성 ${agreePercent}% (${post.agreeCount}표)</span>
+                <span class="stat-disagree">👎 반대 ${disagreePercent}% (${post.disagreeCount}표)</span>
+            </div>
+            <div class="progress-bar-wrapper">
+                <div class="progress-bar-fill" style="width: 0%;"></div>
+            </div>
+            <div class="auto-next-hint">10초 후 다음 질문으로 이동합니다...</div>
+        </div>
+    `;
+    
+    setTimeout(() => {
+        const fill = actionsContainer.querySelector('.progress-bar-fill');
+        if (fill) fill.style.width = `${agreePercent}%`;
+    }, 50);
+}
+
 function nextCard() {
+    if (autoTransitionTimeout) {
+        clearTimeout(autoTransitionTimeout);
+        autoTransitionTimeout = null;
+    }
     if (currentIndex < posts.length - 1) {
         currentIndex++;
         const card = document.querySelector('.vote-card');
-        card.style.transform = 'translateX(-120%) rotate(-10deg)';
-        card.style.opacity = '0';
+        if (card) {
+            card.style.transform = 'translateX(-120%) rotate(-10deg)';
+            card.style.opacity = '0';
+        }
         setTimeout(renderCard, 300);
     }
 }
 
 // Prev Card
 function prevCard() {
+    if (autoTransitionTimeout) {
+        clearTimeout(autoTransitionTimeout);
+        autoTransitionTimeout = null;
+    }
     if (currentIndex > 0) {
         currentIndex--;
         const card = document.querySelector('.vote-card');
-        card.style.transform = 'translateX(120%) rotate(10deg)';
-        card.style.opacity = '0';
+        if (card) {
+            card.style.transform = 'translateX(120%) rotate(10deg)';
+            card.style.opacity = '0';
+        }
         setTimeout(renderCard, 300);
     }
 }
