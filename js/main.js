@@ -5,40 +5,78 @@ const API_BASE = (window.location.hostname === 'localhost' || window.location.ho
 // Client-side Mock Data Fallback when backend is not reachable/configured
 const MOCK_FALLBACK_DATA = {
     content: [
+        // POLITICS
         {
             id: 9991,
             category: "POLITICS",
             createdDate: new Date().toISOString(),
             endDate: new Date(Date.now() + 30 * 86400000).toISOString(),
-            question: "내년 대선, 어떤 후보를 더 지지하시나요?"
+            question: "내년 대선 투표 기준:\n정책 보고 투표 (👍) vs 인물 보고 투표 (👎)"
         },
         {
             id: 9992,
-            category: "ENTERTAINMENT",
+            category: "POLITICS",
             createdDate: new Date().toISOString(),
             endDate: new Date(Date.now() + 15 * 86400000).toISOString(),
-            question: "좋아하는 아이돌 그룹 컴백 콘서트 티켓 50만원 찬반"
+            question: "기본 소득제 도입:\n전 국민 지급 (👍) vs 취약 계층 집중 지급 (👎)"
         },
         {
             id: 9993,
-            category: "ETC",
+            category: "POLITICS",
             createdDate: new Date().toISOString(),
-            endDate: new Date(Date.now() + 365 * 86400000).toISOString(),
-            question: "탕수육 부먹 vs 찍먹, 평생의 논쟁"
+            endDate: new Date(Date.now() + 45 * 86400000).toISOString(),
+            question: "만 18세 선거 연령 제한:\n현행 유지 (👍) vs 만 16세로 추가 인하 (👎)"
         },
         {
             id: 9994,
             category: "POLITICS",
             createdDate: new Date().toISOString(),
-            endDate: new Date(Date.now() + 10 * 86400000).toISOString(),
-            question: "주 4일 근무제 법제화 도입 찬반 투표"
+            endDate: new Date(Date.now() - 2 * 86400000).toISOString(), // ended
+            question: "국회의원 특권 폐지:\n찬성 및 폐지 (👍) vs 유지하되 책임 강화 (👎)"
         },
         {
             id: 9995,
-            category: "ETC",
+            category: "POLITICS",
             createdDate: new Date().toISOString(),
-            endDate: new Date(Date.now() + 120 * 86400000).toISOString(),
-            question: "평생 겨울만 살기 vs 평생 여름만 살기"
+            endDate: new Date(Date.now() + 10 * 86400000).toISOString(),
+            question: "주 4일제 도입 시 임금 기준:\n임금 삭감 수용 (👍) vs 임금 보전 필수 (👎)"
+        },
+
+        // ENTERTAINMENT
+        {
+            id: 9996,
+            category: "ENTERTAINMENT",
+            createdDate: new Date().toISOString(),
+            endDate: new Date(Date.now() + 60 * 86400000).toISOString(),
+            question: "좋아하는 가수의 콘서트 티켓팅:\n맨 앞 스탠딩 (👍) vs 편안한 지정석 (👎)"
+        },
+        {
+            id: 9997,
+            category: "ENTERTAINMENT",
+            createdDate: new Date().toISOString(),
+            endDate: new Date(Date.now() + 20 * 86400000).toISOString(),
+            question: "아이돌 가수의 열애 공개:\n연애는 개인의 자유 (👍) vs 팬들에 대한 예의 부족 (👎)"
+        },
+        {
+            id: 9998,
+            category: "ENTERTAINMENT",
+            createdDate: new Date().toISOString(),
+            endDate: new Date(Date.now() - 5 * 86400000).toISOString(), // ended
+            question: "좋아하는 예능 프로그램 유형:\n리얼 야외 버라이어티 (👍) vs 실내 스튜디오 토크쇼 (👎)"
+        },
+        {
+            id: 9999,
+            category: "ENTERTAINMENT",
+            createdDate: new Date().toISOString(),
+            endDate: new Date(Date.now() + 40 * 86400000).toISOString(),
+            question: "드라마 시청 방식 선호도:\n매주 본방 사수 (👍) vs 한 번에 몰아보기 (👎)"
+        },
+        {
+            id: 10000,
+            category: "ENTERTAINMENT",
+            createdDate: new Date().toISOString(),
+            endDate: new Date(Date.now() + 30 * 86400000).toISOString(),
+            question: "연예인 부캐(서브 캐릭터) 활동:\n참신하고 재밌다 (👍) vs 과도한 이미지 소비로 식상하다 (👎)"
         }
     ]
 };
@@ -210,18 +248,37 @@ function updateNavButtons() {
 
 function showFeedback(text) {
     const card = document.querySelector('.vote-card');
+    if (!card) return;
     const feedback = document.createElement('div');
     feedback.style.position = 'absolute';
     feedback.style.top = '50%';
     feedback.style.left = '50%';
-    feedback.style.transform = 'translate(-50%, -50%)';
-    feedback.style.fontSize = '40px';
+    feedback.style.transform = 'translate(-50%, -50%) scale(0.6)';
+    feedback.style.fontSize = '36px';
     feedback.style.fontWeight = '800';
     feedback.style.color = 'white';
-    feedback.style.textShadow = '0 10px 20px rgba(0,0,0,0.5)';
+    feedback.style.textShadow = '0 10px 25px rgba(0,0,0,0.6)';
     feedback.style.zIndex = '100';
+    feedback.style.transition = 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    feedback.style.opacity = '0';
+    feedback.style.pointerEvents = 'none';
     feedback.innerText = text;
     card.appendChild(feedback);
+
+    // Animate in
+    setTimeout(() => {
+        feedback.style.transform = 'translate(-50%, -50%) scale(1.1)';
+        feedback.style.opacity = '1';
+    }, 10);
+
+    // Animate out
+    setTimeout(() => {
+        feedback.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        feedback.style.opacity = '0';
+        setTimeout(() => {
+            feedback.remove();
+        }, 300);
+    }, 500);
 }
 
 // --- Event Listeners ---

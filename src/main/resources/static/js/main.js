@@ -150,18 +150,37 @@ function updateNavButtons() {
 
 function showFeedback(text) {
     const card = document.querySelector('.vote-card');
+    if (!card) return;
     const feedback = document.createElement('div');
     feedback.style.position = 'absolute';
     feedback.style.top = '50%';
     feedback.style.left = '50%';
-    feedback.style.transform = 'translate(-50%, -50%)';
-    feedback.style.fontSize = '40px';
+    feedback.style.transform = 'translate(-50%, -50%) scale(0.6)';
+    feedback.style.fontSize = '36px';
     feedback.style.fontWeight = '800';
     feedback.style.color = 'white';
-    feedback.style.textShadow = '0 10px 20px rgba(0,0,0,0.5)';
+    feedback.style.textShadow = '0 10px 25px rgba(0,0,0,0.6)';
     feedback.style.zIndex = '100';
+    feedback.style.transition = 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    feedback.style.opacity = '0';
+    feedback.style.pointerEvents = 'none';
     feedback.innerText = text;
     card.appendChild(feedback);
+
+    // Animate in
+    setTimeout(() => {
+        feedback.style.transform = 'translate(-50%, -50%) scale(1.1)';
+        feedback.style.opacity = '1';
+    }, 10);
+
+    // Animate out
+    setTimeout(() => {
+        feedback.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        feedback.style.opacity = '0';
+        setTimeout(() => {
+            feedback.remove();
+        }, 300);
+    }, 500);
 }
 
 // --- Event Listeners ---
