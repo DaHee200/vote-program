@@ -58,7 +58,7 @@ async function castVote(postId, choice) {
         
         if (response.ok) {
             // Optional: Show success feedback
-            showFeedback(choice ? 'Agreed!' : 'Disagreed!');
+            showFeedback('선택 완료');
             // Move to next card after a short delay
             setTimeout(nextCard, 800);
         } else {
@@ -94,12 +94,10 @@ function renderCard() {
         <div class="actions">
             ${!isEnded ? `
             <button class="btn btn-agree" onclick="handleVote(true)">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Agree
+                👍
             </button>
             <button class="btn btn-disagree" onclick="handleVote(false)">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                Disagree
+                👎
             </button>
             ` : `
             <div style="text-align: center; color: var(--text-muted); padding: 20px; background: rgba(255,255,255,0.03); border-radius: 20px;">
