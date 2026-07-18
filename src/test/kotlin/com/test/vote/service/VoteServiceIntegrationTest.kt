@@ -103,16 +103,16 @@ class VoteServiceIntegrationTest(
         postRepository.deleteAll()
         voteRepository.deleteAll()
 
-        postService.createPost(PostCommand("Culture Post", Category.CULTURE, LocalDate.now().plusDays(1)))
+        postService.createPost(PostCommand("Entertainment Post", Category.ENTERTAINMENT, LocalDate.now().plusDays(1)))
         postService.createPost(PostCommand("Politics Post", Category.POLITICS, LocalDate.now().plusDays(1)))
 
-        When("CULTURE 카테고리로 필터링하여 조회하면") {
-            val result = postService.getPosts(0, 10, Category.CULTURE, "latest")
+        When("ENTERTAINMENT 카테고리로 필터링하여 조회하면") {
+            val result = postService.getPosts(0, 10, Category.ENTERTAINMENT, "latest")
 
-            Then("CULTURE 카테고리의 포스트만 반환되어야 한다") {
+            Then("ENTERTAINMENT 카테고리의 포스트만 반환되어야 한다") {
                 result.content.size shouldBe 1
-                result.content[0].question shouldBe "Culture Post"
-                result.content[0].category shouldBe Category.CULTURE
+                result.content[0].question shouldBe "Entertainment Post"
+                result.content[0].category shouldBe Category.ENTERTAINMENT
             }
         }
 

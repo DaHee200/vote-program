@@ -21,18 +21,33 @@ class PostService(private val postRepository: PostRepository) {
     }
 
     @Transactional(readOnly = true)
-    fun getPosts(page: Int, size: Int, category: Category?, sortBy: String): Slice<Post> {
+    fun getPosts(page: Int, size: Int, category: Category?, sortBy: String, status: String? = null): Slice<Post> {
         val sort = if (sortBy.equals("popular", ignoreCase = true)) {
             Sort.by(Sort.Direction.DESC, "voteResult.totalCount")
         } else {
             Sort.by(Sort.Direction.DESC, "createdDate")
         }
         val pageable = PageRequest.of(page, size, sort)
+        val now = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Seoul"))
         
-        return if (category != null) {
-            postRepository.findByCategory(category, pageable)
-        } else {
-            postRepository.findSliceBy(pageable)
+        val normalizedStatus = if (status.isNullOrBlank()) null else status.lowercase()
+
+        return when (normalizedStatus) {
+            "ongoing" -> if (category != null) {
+                postRepository.findByCategoryAndEndDateGreaterThanEqual(category, now, pageable)
+            } else {
+                postRepository.findByEndDateGreaterThanEqual(now, pageable)
+            }
+            "ended" -> if (category != null) {
+                postRepository.findByCategoryAndEndDateBefore(category, now, pageable)
+            } else {
+                postRepository.findByEndDateBefore(now, pageable)
+            }
+            else -> if (category != null) {
+                postRepository.findByCategory(category, pageable)
+            } else {
+                postRepository.findSliceBy(pageable)
+            }
         }
     }
 

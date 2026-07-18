@@ -15,4 +15,16 @@ interface PostRepository : JpaRepository<Post, Long> {
 
     @EntityGraph(attributePaths = ["voteResult"])
     fun findByCategory(category: Category, pageable: Pageable): Slice<Post>
+
+    @EntityGraph(attributePaths = ["voteResult"])
+    fun findByEndDateGreaterThanEqual(date: java.time.LocalDate, pageable: Pageable): Slice<Post>
+
+    @EntityGraph(attributePaths = ["voteResult"])
+    fun findByEndDateBefore(date: java.time.LocalDate, pageable: Pageable): Slice<Post>
+
+    @EntityGraph(attributePaths = ["voteResult"])
+    fun findByCategoryAndEndDateGreaterThanEqual(category: Category, date: java.time.LocalDate, pageable: Pageable): Slice<Post>
+
+    @EntityGraph(attributePaths = ["voteResult"])
+    fun findByCategoryAndEndDateBefore(category: Category, date: java.time.LocalDate, pageable: Pageable): Slice<Post>
 }

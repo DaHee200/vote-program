@@ -38,5 +38,5 @@ bin/
 ### VS Code ###
 .vscode/
 
-### Mac OS ###
-.DS_Store*.log
+.DS_Store
+*.log

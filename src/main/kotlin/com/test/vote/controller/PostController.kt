@@ -35,10 +35,16 @@ class PostController(
     fun getPosts(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int,
-        @RequestParam(required = false) category: Category?,
-        @RequestParam(defaultValue = "latest") sortBy: String
+        @RequestParam(required = false) category: String?,
+        @RequestParam(defaultValue = "latest") sortBy: String,
+        @RequestParam(required = false) status: String?
     ): Slice<PostRes> {
-        return postService.getPosts(page, size, category, sortBy)
+        val categoryEnum = try {
+            if (category.isNullOrBlank()) null else Category.valueOf(category.uppercase())
+        } catch (e: IllegalArgumentException) {
+            null
+        }
+        return postService.getPosts(page, size, categoryEnum, sortBy, status)
             .map { PostResFactory.createPostRes(it) }
     }
 }
