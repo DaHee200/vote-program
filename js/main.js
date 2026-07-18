@@ -2,6 +2,47 @@ const API_BASE = (window.location.hostname === 'localhost' || window.location.ho
     ? (window.location.port === '8080' ? '' : 'http://localhost:8080')
     : 'https://vote-program-backend.onrender.com'; // <-- REPLACE with your actual deployed backend URL (Render, Railway, etc.)
 
+// Client-side Mock Data Fallback when backend is not reachable/configured
+const MOCK_FALLBACK_DATA = {
+    content: [
+        {
+            id: 9991,
+            category: "POLITICS",
+            createdDate: new Date().toISOString(),
+            endDate: new Date(Date.now() + 30 * 86400000).toISOString(),
+            question: "내년 대선, 어떤 후보를 더 지지하시나요?"
+        },
+        {
+            id: 9992,
+            category: "ENTERTAINMENT",
+            createdDate: new Date().toISOString(),
+            endDate: new Date(Date.now() + 15 * 86400000).toISOString(),
+            question: "좋아하는 아이돌 그룹 컴백 콘서트 티켓 50만원 찬반"
+        },
+        {
+            id: 9993,
+            category: "ETC",
+            createdDate: new Date().toISOString(),
+            endDate: new Date(Date.now() + 365 * 86400000).toISOString(),
+            question: "탕수육 부먹 vs 찍먹, 평생의 논쟁"
+        },
+        {
+            id: 9994,
+            category: "POLITICS",
+            createdDate: new Date().toISOString(),
+            endDate: new Date(Date.now() + 10 * 86400000).toISOString(),
+            question: "주 4일 근무제 법제화 도입 찬반 투표"
+        },
+        {
+            id: 9995,
+            category: "ETC",
+            createdDate: new Date().toISOString(),
+            endDate: new Date(Date.now() + 120 * 86400000).toISOString(),
+            question: "평생 겨울만 살기 vs 평생 여름만 살기"
+        }
+    ]
+};
+
 let posts = [];
 let currentIndex = 0;
 let currentCategory = "";
@@ -34,6 +75,7 @@ async function fetchPosts(reset = false) {
     try {
         const url = `${API_BASE}/posts?page=${page}&size=${size}&category=${currentCategory}&sortBy=${currentSort}&status=${currentStatus}`;
         const response = await fetch(url);
+        if (!response.ok) throw new Error("Server response not OK");
         const data = await response.json();
         
         if (data.content.length > 0) {
@@ -46,7 +88,21 @@ async function fetchPosts(reset = false) {
             updateNavButtons();
         }
     } catch (error) {
-        console.error("Fetch error:", error);
+        console.warn("Fetch error, falling back to local mock data:", error);
+        if (reset) {
+            posts = [...MOCK_FALLBACK_DATA.content];
+            // Filter by category
+            if (currentCategory) {
+                posts = posts.filter(p => p.category === currentCategory);
+            }
+            currentIndex = 0;
+            if (posts.length > 0) {
+                renderCard();
+            } else {
+                cardStack.innerHTML = '<div class="vote-card"><div class="question" style="font-size: 18px; color: var(--text-muted)">No votes found (Mock).</div></div>';
+                updateNavButtons();
+            }
+        }
     } finally {
         isFetching = false;
     }
@@ -64,11 +120,13 @@ async function castVote(postId, choice) {
             showFeedback(choice ? 'Agreed!' : 'Disagreed!');
             setTimeout(nextCard, 800);
         } else {
-            const errorText = await response.text();
-            alert(errorText || "Vote failed. Maybe rate limited?");
+            showFeedback(choice ? 'Agreed! (Mock)' : 'Disagreed! (Mock)');
+            setTimeout(nextCard, 800);
         }
     } catch (error) {
-        console.error("Vote error:", error);
+        console.warn("Vote API error, simulating mock vote:", error);
+        showFeedback(choice ? 'Agreed! (Mock)' : 'Disagreed! (Mock)');
+        setTimeout(nextCard, 800);
     }
 }
 
@@ -136,6 +194,7 @@ function nextCard() {
     }
 }
 
+// Prev Card
 function prevCard() {
     if (currentIndex > 0) {
         currentIndex--;
